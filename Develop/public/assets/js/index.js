@@ -1,15 +1,15 @@
-let noteTitle;
-let noteText;
-let saveNoteBtn;
-let newNoteBtn;
-let noteList;
-
+var noteTitle
+var noteText
+var saveNoteBtn
+var newNoteBtn
+var noteList
 if (window.location.pathname === '/notes') {
-  noteTitle = document.querySelector('.note-title');
-  noteText = document.querySelector('.note-textarea');
-  saveNoteBtn = document.querySelector('.save-note');
-  newNoteBtn = document.querySelector('.new-note');
-  noteList = document.querySelectorAll('.list-container .list-group');
+ noteTitle = $(".note-title");
+ noteText =  $(".note-text");
+ saveNoteBtn = $("#save-note");
+ newNoteBtn = $("#new-note");
+ noteList = $(".list-group");
+ 
 }
 
 // Show an element
@@ -65,17 +65,17 @@ const renderActiveNote = () => {
     noteText.value = '';
   }
 };
-
-const handleNoteSave = () => {
+$("#save-note").on('click', function handleNoteSave(){
   const newNote = {
     title: noteTitle.value,
     text: noteText.value,
-  };
+  }
   saveNote(newNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
-  });
-};
+  })
+})
+
 
 // Delete the clicked note
 const handleNoteDelete = (e) => {
@@ -103,18 +103,32 @@ const handleNoteView = (e) => {
 };
 
 // Sets the activeNote to and empty object and allows the user to enter a new note
-const handleNewNoteView = (e) => {
+$("#new-note").on('click', function handleNewNoteView(){
   activeNote = {};
   renderActiveNote();
-};
 
-const handleRenderSaveBtn = () => {
+});
+
+$(".note-title").on('keyup', function handleRenderSaveBtn(){
+ 
   if (!noteTitle.value.trim() || !noteText.value.trim()) {
     hide(saveNoteBtn);
   } else {
     show(saveNoteBtn);
   }
-};
+
+});
+$(".list-group").on('keyup', function handleRenderSaveBtn(){
+ 
+  if (!noteTitle.value.trim() || !noteText.value.trim()) {
+    hide(saveNoteBtn);
+  } else {
+    show(saveNoteBtn);
+  }
+
+});
+
+ 
 
 // Render the list of note titles
 const renderNoteList = async (notes) => {
@@ -172,12 +186,9 @@ const renderNoteList = async (notes) => {
 
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
-
-if (window.location.pathname === '/notes') {
-  saveNoteBtn.addEventListener('click', handleNoteSave);
-  newNoteBtn.addEventListener('click', handleNewNoteView);
-  noteTitle.addEventListener('keyup', handleRenderSaveBtn);
-  noteText.addEventListener('keyup', handleRenderSaveBtn);
-}
+// $("#save-note").addEventListener('click', handleNoteSave);
+// $("#new-note").addEventListener('click', handleNewNoteView);
+// $(".note-title").addEventListener('keyup', handleRenderSaveBtn);
+// $(".list-group").addEventListener('keyup', handleRenderSaveBtn);
 
 getAndRenderNotes();

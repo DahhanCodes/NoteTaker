@@ -18,8 +18,7 @@ app.use(express.static("./Develop/public"));
 
 
 app.use(routes);
-// app.use(apiRoutes)
-// Sync Database
+
 app.listen(process.env.PORT || 3000, function(){
     console.log("Express server intiated port %d in %s mode", this.address().port, app.settings.env); 
   });
