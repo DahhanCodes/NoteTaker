@@ -198,9 +198,15 @@ const renderNoteList = async (notes) => {
 
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
-// $("#save-note").addEventListener('click', handleNoteSave);
-// $("#new-note").addEventListener('click', handleNewNoteView);
-// $(".note-title").addEventListener('keyup', handleRenderSaveBtn);
-// $(".list-group").addEventListener('keyup', handleRenderSaveBtn);
+$(".note-title").on('change', function (){
+  noteTitle = $(".note-title").value.text()
+  console.log(noteTitle)
+});
+
+$(".note-text").on('change',  function (){
+  noteText = $(".note-text").value.text()
+  console.log(noteText)
+});
+
 
 getAndRenderNotes();

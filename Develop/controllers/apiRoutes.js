@@ -12,6 +12,8 @@ router.post('/notes', (req,res) => {
 
      createdNote = req.body; 
      notes = JSON.parse(fs.readFileSync(DB, "utf8"));
+     //randomizing the id
+     createdNote.id= Math.floor((1 + Math.random()) * 0x10000 ).toString(10).substring(1);
 
      notes.push(createdNote);
      fs.writeFileSync(DB, JSON.stringify(notes)); 
