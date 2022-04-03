@@ -1,5 +1,6 @@
 const path = require("path");
 const router = require('express').Router();
+const DB = require("../db/db.json");
 var notes = [];
 var createdNote;
 //this var will be used later to capture the id of any post we want to delete
@@ -10,10 +11,10 @@ router.post('/notes', (req,res) => {
     console.info(`${req.method} request received to add a note`);
 
      createdNote = req.body; 
-     notes = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8"));
+     notes = JSON.parse(fs.readFileSync(DB, "utf8"));
 
      notes.push(createdNote);
-     fs.writeFileSync("./Develop/db/db.json", JSON.stringify(notes)); 
+     fs.writeFileSync(DB, JSON.stringify(notes)); 
     res.json(notes);
 
     });
@@ -22,7 +23,7 @@ router.post('/notes', (req,res) => {
 router.delete('/notes/:id', (req, res) => {
         console.info(`${req.method} request received.`);
     
-        notes = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8"));
+        notes = JSON.parse(fs.readFileSync(DB, "utf8"));
         //capturing ID for percise execution
         iD = (req.params.id).toString();
     
@@ -33,13 +34,13 @@ router.delete('/notes/:id', (req, res) => {
     
         //Writing the new DB
         //deleted post will be off the DB
-        fs.writeFileSync("./Develop/db/db.json", JSON.stringify(noteList));
+        fs.writeFileSync(DB, JSON.stringify(noteList));
         res.json(notes);
     });
 
 //route for returning all the notes
 router.get('/notes', (req,res) => {
-        res.sendFile(path.join(__dirname, "./Develop/db/db.json"));
+        res.sendFile(path.join(__dirname, DB));
         });
 
 

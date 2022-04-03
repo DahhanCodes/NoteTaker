@@ -1,3 +1,4 @@
+
 var noteTitle
 var noteText
 var saveNoteBtn
@@ -11,6 +12,17 @@ if (window.location.pathname === '/notes') {
  noteList = $(".list-group");
  
 }
+
+fetch("../../../db/db.json").then(response => {
+  console.log(response);
+  return response.json();
+}).then(data => {
+  // Work with JSON data here
+  console.log(data);
+}).catch(err => {
+  // Do something for an error here
+  console.log("Error Reading data " + err);
+});
 
 // Show an element
 const show = (elem) => {
