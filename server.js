@@ -19,6 +19,6 @@ app.use(express.static("./Develop/public"));
 
 app.use(routes);
 
-app.listen(process.env.PORT || 3000, function(){
+app.listen(PORT, function(){
     console.log("Express server intiated port %d in %s mode", this.address().port, app.settings.env); 
   });

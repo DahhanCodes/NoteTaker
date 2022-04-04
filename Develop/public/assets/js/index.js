@@ -4,9 +4,10 @@ var noteText
 var saveNoteBtn
 var newNoteBtn
 var noteList
+var newNote
 if (window.location.pathname === '/notes') {
  noteTitle = $(".note-title");
- noteText =  $(".note-text");
+ noteText =  $(".note-textarea");
  saveNoteBtn = $("#save-note");
  newNoteBtn = $("#new-note");
  noteList = $(".list-group");
@@ -14,6 +15,7 @@ if (window.location.pathname === '/notes') {
 }
 
 fetch("../../../db/db.json").then(response => {
+  console.log("trying to fetch the db")
   console.log(response);
   return response.json();
 }).then(data => {
@@ -26,12 +28,12 @@ fetch("../../../db/db.json").then(response => {
 
 // Show an element
 const show = (elem) => {
-  elem.style.display = 'inline';
+  $(""+elem).css("display","inline");
 };
 
 // Hide an element
 const hide = (elem) => {
-  elem.style.display = 'none';
+ $(""+elem).css("display","none");
 };
 
 // activeNote is used to keep track of the note in the textarea
@@ -44,15 +46,20 @@ const getNotes = () =>
       'Content-Type': 'application/json',
     },
   });
-
-const saveNote = (note) =>
-  fetch('/api/notes', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(note),
-  });
+  function save(title, note) {
+    $.post("/api/save", {
+      title: title,
+      note: note
+    })
+  }
+// const saveNote = (note) =>
+//   fetch('/api/save', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify(note),
+//   });
 
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
@@ -78,16 +85,14 @@ const renderActiveNote = () => {
   }
 };
 $("#save-note").on('click', function handleNoteSave(){
-  const newNote = {
-    title: noteTitle.value,
-    text: noteText.value,
+    newNote = {
+    title: $(".note-Title").val(),
+    text: $(".note-textarea").val()
   }
-  saveNote(newNote).then(() => {
-    getAndRenderNotes();
-    renderActiveNote();
-  })
+  save(newNote.title,newNote.text)
+  getAndRenderNotes();
+  renderActiveNote();
 })
-
 
 // Delete the clicked note
 const handleNoteDelete = (e) => {
@@ -123,7 +128,7 @@ $("#new-note").on('click', function handleNewNoteView(){
 
 $(".note-title").on('keyup', function handleRenderSaveBtn(){
  
-  if (!noteTitle.value.trim() || !noteText.value.trim()) {
+  if (!$(".note-title").val() || !$(".note-textarea").val()){
     hide(saveNoteBtn);
   } else {
     show(saveNoteBtn);
@@ -132,7 +137,7 @@ $(".note-title").on('keyup', function handleRenderSaveBtn(){
 });
 $(".list-group").on('keyup', function handleRenderSaveBtn(){
  
-  if (!noteTitle.value.trim() || !noteText.value.trim()) {
+  if (!$(".note-title").val() || !$(".note-textarea").val()) {
     hide(saveNoteBtn);
   } else {
     show(saveNoteBtn);
@@ -198,9 +203,15 @@ const renderNoteList = async (notes) => {
 
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
-// $("#save-note").addEventListener('click', handleNoteSave);
-// $("#new-note").addEventListener('click', handleNewNoteView);
-// $(".note-title").addEventListener('keyup', handleRenderSaveBtn);
-// $(".list-group").addEventListener('keyup', handleRenderSaveBtn);
+$(".note-title").on('change', function (){
+  noteTitle =$(this).val()
+  console.log(noteTitle)
+});
+
+$(".note-textarea").on('change',  function (){
+  noteText = $(this).val()
+  console.log(noteText)
+});
+
 
 getAndRenderNotes();

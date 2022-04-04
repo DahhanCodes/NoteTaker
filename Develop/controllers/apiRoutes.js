@@ -1,17 +1,21 @@
 const path = require("path");
 const router = require('express').Router();
 const DB = require("../db/db.json");
+const fs = require("fs")
 var notes = [];
 var createdNote;
 //this var will be used later to capture the id of any post we want to delete
 var iD ;
 
 //route for posting new data into database
-router.post('/notes', (req,res) => {
+router.post('/save', (req,res) => {
+    console.log("entered post route")
     console.info(`${req.method} request received to add a note`);
 
      createdNote = req.body; 
      notes = JSON.parse(fs.readFileSync(DB, "utf8"));
+     //randomizing the id
+     createdNote.id= Math.floor((1 + Math.random()) * 0x10000 ).toString(10).substring(1);
 
      notes.push(createdNote);
      fs.writeFileSync(DB, JSON.stringify(notes)); 
