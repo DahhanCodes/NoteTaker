@@ -1,39 +1,25 @@
+let noteTitle;
+let noteText;
+let saveNoteBtn;
+let newNoteBtn;
+let noteList;
 
-var noteTitle
-var noteText
-var saveNoteBtn
-var newNoteBtn
-var noteList
-var newNote
-if (window.location.pathname === '/notes') {
- noteTitle = $(".note-title");
- noteText =  $(".note-textarea");
- saveNoteBtn = $("#save-note");
- newNoteBtn = $("#new-note");
- noteList = $(".list-group");
- 
+if (window.location.pathname === '/notes.html') {
+  noteTitle = document.querySelector('.note-title');
+  noteText = document.querySelector('.note-textarea');
+  saveNoteBtn = document.querySelector('#save-note');
+  newNoteBtn = document.querySelector('#new-note');
+  noteList = document.querySelectorAll('.list-group');
 }
-
-fetch("../../../db/db.json").then(response => {
-  console.log("trying to fetch the db")
-  console.log(response);
-  return response.json();
-}).then(data => {
-  // Work with JSON data here
-  console.log(data);
-}).catch(err => {
-  // Do something for an error here
-  console.log("Error Reading data " + err);
-});
 
 // Show an element
 const show = (elem) => {
-  $(""+elem).css("display","inline");
+  elem.style.display = 'inline';
 };
 
 // Hide an element
 const hide = (elem) => {
- $(""+elem).css("display","none");
+  elem.style.display = 'none';
 };
 
 // activeNote is used to keep track of the note in the textarea
@@ -46,20 +32,15 @@ const getNotes = () =>
       'Content-Type': 'application/json',
     },
   });
-  function save(title, note) {
-    $.post("/api/save", {
-      title: title,
-      note: note
-    })
-  }
-// const saveNote = (note) =>
-//   fetch('/api/save', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify(note),
-//   });
+
+const saveNote = (note) =>
+  fetch('/api/save', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(note),
+  });
 
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
@@ -84,15 +65,17 @@ const renderActiveNote = () => {
     noteText.value = '';
   }
 };
-$("#save-note").on('click', function handleNoteSave(){
-    newNote = {
-    title: $(".note-Title").val(),
-    text: $(".note-textarea").val()
-  }
-  save(newNote.title,newNote.text)
-  getAndRenderNotes();
-  renderActiveNote();
-})
+
+const handleNoteSave = () => {
+  const newNote = {
+    title: noteTitle.value,
+    text: noteText.value,
+  };
+  saveNote(newNote).then(() => {
+    getAndRenderNotes();
+    renderActiveNote();
+  });
+};
 
 // Delete the clicked note
 const handleNoteDelete = (e) => {
@@ -120,37 +103,23 @@ const handleNoteView = (e) => {
 };
 
 // Sets the activeNote to and empty object and allows the user to enter a new note
-$("#new-note").on('click', function handleNewNoteView(){
+const handleNewNoteView = (e) => {
   activeNote = {};
   renderActiveNote();
+};
 
-});
-
-$(".note-title").on('keyup', function handleRenderSaveBtn(){
- 
-  if (!$(".note-title").val() || !$(".note-textarea").val()){
+const handleRenderSaveBtn = () => {
+  if (!noteTitle.value.trim() || !noteText.value.trim()) {
     hide(saveNoteBtn);
   } else {
     show(saveNoteBtn);
   }
-
-});
-$(".list-group").on('keyup', function handleRenderSaveBtn(){
- 
-  if (!$(".note-title").val() || !$(".note-textarea").val()) {
-    hide(saveNoteBtn);
-  } else {
-    show(saveNoteBtn);
-  }
-
-});
-
- 
+};
 
 // Render the list of note titles
 const renderNoteList = async (notes) => {
   let jsonNotes = await notes.json();
-  if (window.location.pathname === '/notes') {
+  if (window.location.pathname === '/notes.html') {
     noteList.forEach((el) => (el.innerHTML = ''));
   }
 
@@ -196,22 +165,19 @@ const renderNoteList = async (notes) => {
     noteListItems.push(li);
   });
 
-  if (window.location.pathname === '/notes') {
+  if (window.location.pathname === '/notes.html') {
     noteListItems.forEach((note) => noteList[0].append(note));
   }
 };
 
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
-$(".note-title").on('change', function (){
-  noteTitle =$(this).val()
-  console.log(noteTitle)
-});
 
-$(".note-textarea").on('change',  function (){
-  noteText = $(this).val()
-  console.log(noteText)
-});
-
+if (window.location.pathname === '/notes.html') {
+  saveNoteBtn.addEventListener('click', handleNoteSave);
+  newNoteBtn.addEventListener('click', handleNewNoteView);
+  noteTitle.addEventListener('keyup', handleRenderSaveBtn);
+  noteText.addEventListener('keyup', handleRenderSaveBtn);
+}
 
 getAndRenderNotes();

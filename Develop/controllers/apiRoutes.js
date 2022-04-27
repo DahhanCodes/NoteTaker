@@ -10,15 +10,18 @@ var iD ;
 //route for posting new data into database
 router.post('/save', (req,res) => {
     console.log("entered post route")
+    
+    console.log(req.body)
     console.info(`${req.method} request received to add a note`);
 
      createdNote = req.body; 
-     notes = JSON.parse(fs.readFileSync(DB, "utf8"));
+     notes = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8"));
      //randomizing the id
      createdNote.id= Math.floor((1 + Math.random()) * 0x10000 ).toString(10).substring(1);
 
      notes.push(createdNote);
-     fs.writeFileSync(DB, JSON.stringify(notes)); 
+     console.log(notes)
+     fs.writeFileSync("./Develop/db/db.json", JSON.stringify(notes)); 
     res.json(notes);
 
     });
@@ -27,7 +30,7 @@ router.post('/save', (req,res) => {
 router.delete('/notes/:id', (req, res) => {
         console.info(`${req.method} request received.`);
     
-        notes = JSON.parse(fs.readFileSync(DB, "utf8"));
+        notes = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8"));
         //capturing ID for percise execution
         iD = (req.params.id).toString();
     
@@ -38,13 +41,13 @@ router.delete('/notes/:id', (req, res) => {
     
         //Writing the new DB
         //deleted post will be off the DB
-        fs.writeFileSync(DB, JSON.stringify(noteList));
+        fs.writeFileSync("./Develop/db/db.json", JSON.stringify(noteList));
         res.json(notes);
     });
 
 //route for returning all the notes
 router.get('/notes', (req,res) => {
-        res.sendFile(path.join(__dirname, DB));
+        res.sendFile(path.join(__dirname, "./Develop/public/notes.html"));
         });
 
 
